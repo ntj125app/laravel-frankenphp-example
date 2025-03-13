@@ -1,0 +1,23 @@
+# BUILD Phase 1 - Run Composer install
+FROM composer:lts AS composer
+
+COPY . /app
+WORKDIR /app
+
+RUN composer install --ignore-platform-reqs --optimize-autoloader --no-dev --no-interaction --no-progress --prefer-dist
+
+# BUILD Phase 2 - Compile with FrankenPHP
+FROM dunglas/frankenphp
+
+COPY --from=composer /app /app
+WORKDIR /app
+
+# Kalau perlu install php extension
+RUN install-php-extensions \
+	pdo_mysql \
+	gd \
+	intl \
+	zip \
+	opcache
+
+VOLUME ["/app/storage"]
