@@ -27,7 +27,7 @@ RUN wget http://nongnu.askapache.com/acl/acl-2.3.2.tar.gz && \
     ls /usr/lib | grep libacl.a
 
 # BUILD Phase 3 - Compile with FrankenPHP
-FROM dunglas/frankenphp:static-builder AS frankenphp-static-builder
+FROM dunglas/frankenphp:static-builder-1.4.4 AS frankenphp-static-builder
 
 COPY --from=composer-compile /app /go/src/app/dist/app
 COPY --from=libacl-static-builder /usr/lib/libattr.a /go/src/app/dist/static-php-cli/buildroot/lib/libattr.a
