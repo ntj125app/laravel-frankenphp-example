@@ -7,13 +7,12 @@ WORKDIR /app
 RUN composer install --ignore-platform-reqs --optimize-autoloader --no-dev --no-interaction --no-progress --prefer-dist
 
 # BUILD Phase 2 - Compile with FrankenPHP
-FROM dunglas/frankenphp:static-builder AS frankenphp-static-builder
+FROM dunglas/frankenphp:static-builder-1.3 AS frankenphp-static-builder
 
 COPY --from=composer-compile /app /go/src/app/dist/app
 
 WORKDIR /go/src/app
 RUN EMBED=dist/app/ \
-    PHP_VERSION=8.3.15 \
     ./build-static.sh
 
 # COPY file dari dalam container ke luar
