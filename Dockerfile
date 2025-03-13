@@ -13,7 +13,7 @@ COPY --from=composer-compile /app /go/src/app/dist/app
 
 WORKDIR /go/src/app
 
-RUN EMBED=dist/app PHP_EXTENSION_LIBS=bzip2,freetype,libavif,libjpeg,liblz4,libwebp,libzip,nghttp2,brotli,libacl ./build-static.sh
+RUN EMBED=dist/app PHP_VERSION=8.3 PHP_EXTENSION_LIBS=bzip2,freetype,libavif,libjpeg,liblz4,libwebp,libzip,nghttp2,brotli,libacl ./build-static.sh
 
 # COPY file dari dalam container ke luar
 # docker cp $(docker create --name static-app-tmp <NAMA IMAGE, DAN TAGNYA>):/go/src/app/dist/frankenphp-linux-x86_64 my-app ; docker rm static-app-tmp
