@@ -9,7 +9,7 @@ RUN composer install --ignore-platform-reqs --optimize-autoloader --no-dev --no-
 # BUILD Phase 2 - Compile static libacl
 FROM alpine AS libacl-static-builder
 
-RUN apk add --no-cache build-base autoconf automake libtool pkgconfig wget 
+RUN apk add --no-cache build-base autoconf automake libtool pkgconfig wget libc-dev
 
 RUN wget http://download.savannah.gnu.org/releases/attr/attr-2.5.2.tar.gz && \
     tar xzf attr-2.5.2.tar.gz && \
