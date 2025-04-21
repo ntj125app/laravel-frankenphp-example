@@ -1,4 +1,4 @@
-name: Container Image Build
+name: Container Binary Build
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
   PACKAGE_NAME: ${{ github.repository_owner }}/${{ vars.IMAGE_NAME }}
 
 jobs:
-  build-base:
+  build-binary:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
@@ -40,15 +40,25 @@ jobs:
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,format=sha256,digests,tag=binary
 
       - name: Build & Push
         id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile-image
+          file: Dockerfile-compile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-packages.outputs.tags }}
           labels: ${{ steps.meta-packages.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-binary
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-binary,mode=max
+      - name: Fetch Binary from Image
+        id: fetch-binary
+        run: |
+          docker cp $(docker create --name static-app-tmp ${{ steps.meta-packages.outputs.tags }}):/go/src/app/dist/frankenphp-linux-x86_64 my-app ; docker rm static-app-tmp
+      - name: Upload Binary
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./my-app
